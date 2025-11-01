@@ -17,7 +17,7 @@ def get_all_users(db: Session) -> list[DBUser]:
     #busca todos os usuarios
     return db.query(DBUser).all()
 
-def create_user(db: Session, user: UserCreate) -> DBUser:
+def create_new_user(db: Session, user: UserCreate) -> DBUser:
     #cria um novo usuario
     hashed_password = get_password_hash(user.usuario_senha)
     
