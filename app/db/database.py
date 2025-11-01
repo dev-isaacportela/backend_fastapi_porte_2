@@ -12,7 +12,7 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
-    """Dependência para obter a sessão do banco de dados."""
+#ter acesso ao banco de dados
     db = SessionLocal()
     try:
         yield db
