@@ -11,11 +11,12 @@ from app.models.orm import DBUser
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-def criar_token(usuario_id):
-    access_token_expires = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+def create_token(usuario_id, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
+    access_token_expires = datetime.now(timezone.utc) + duracao_token
     dic_info = { "sub": str(usuario_id), "exp": int(access_token_expires.timestamp())}
     jwt_codificado = jwt.encode(dic_info, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_codificado
+
 
 @auth_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
@@ -32,5 +33,8 @@ async def login(login_schema: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="E-mail ou senha incorretos")
 
     else:
-        access_token = criar_token(usuario_id=usuario.id)
-        return {"access_token": access_token, "token_type": "bearer"}
+        access_token = create_token(usuario_id=usuario.id)
+        refresh_token = create_token(usuario_id=usuario.id, duracao_token=timedelta(days=7))
+        return {"access_token": access_token,
+                "refresh_token": refresh_token,
+                "token_type": "bearer"}
