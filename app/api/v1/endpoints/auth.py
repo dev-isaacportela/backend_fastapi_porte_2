@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import timedelta, datetime, timezone
 from jose import jwt
-from app.db.database import get_db
+from app.db.database import get_db, verify_token
 from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
 from app.schemas.user_schemas import UserOut
 from app.crud import user_crud
@@ -16,7 +16,6 @@ def create_token(usuario_id, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE
     dic_info = { "sub": str(usuario_id), "exp": int(access_token_expires.timestamp())}
     jwt_codificado = jwt.encode(dic_info, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_codificado
-
 
 @auth_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
@@ -38,3 +37,10 @@ async def login(login_schema: UserLogin, db: Session = Depends(get_db)):
         return {"access_token": access_token,
                 "refresh_token": refresh_token,
                 "token_type": "bearer"}
+        
+@auth_router.post("/refresh")
+async def use_refresh_token(token, db: Session = Depends(get_db)):
+    usuario = verify_token(token, db)
+    access_token = create_token(usuario.id)
+    return {"access_token": access_token,
+            "token_type": "bearer"}
