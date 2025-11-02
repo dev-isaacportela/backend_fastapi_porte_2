@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from app.api.v1.endpoints import auth
 from app.db.database import Base, engine 
 
-
 app = FastAPI(
     title="API de portes de arma em FastAPI",
     description="Autenticação JWT/Bcrypt."
