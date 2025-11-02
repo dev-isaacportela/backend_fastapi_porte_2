@@ -13,6 +13,10 @@ class UserCreate(UserBase):
     usuario_senha: str
     usuario_admin: bool = False
     
+class UserLogin(UserBase):
+    usuario_email: EmailStr
+    usuario_senha: str
+        
     class Config:
         from_attributes = True
         
@@ -31,4 +35,5 @@ class Token(BaseModel):
     
 class TokenData(BaseModel):
     usuario_email: EmailStr | None = None
+    
     

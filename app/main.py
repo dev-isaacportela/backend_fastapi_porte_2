@@ -9,7 +9,7 @@ app = FastAPI(
 )
 
 # Inclui as rotas
-app.include_router(auth.router, prefix="/v1", tags=["Authentication"])
+app.include_router(auth.auth_router, prefix="/v1")
 
 @app.get("/health")
 def health_check():

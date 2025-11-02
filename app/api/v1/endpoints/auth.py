@@ -1,26 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 from jose import jwt
-
 from app.db.database import get_db
-from app.crud.user_crud import get_user_by_email
-from app.core.security import verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
-from app.schemas.user_schemas import Token, UserOut
-
+from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
+from app.schemas.user_schemas import UserOut
 from app.crud import user_crud
-from app.schemas.user_schemas import UserCreate, UserOut
+from app.schemas.user_schemas import UserCreate, UserLogin
+from app.models.orm import DBUser
 
-router = APIRouter()
+auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-def criar_token(id_usuario):
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    dic_info = {"sub": id_usuario, "exp": access_token_expires}
-    jwt_codificado = jwt.ecode(dic_info, SECRET_KEY, algorithm=ALGORITHM)
+def criar_token(usuario_id):
+    access_token_expires = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    dic_info = { "sub": str(usuario_id), "exp": int(access_token_expires.timestamp())}
+    jwt_codificado = jwt.encode(dic_info, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_codificado
 
-@router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
+@auth_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = user_crud.get_user_by_email(db, email=user.usuario_email)
     if db_user:
@@ -28,3 +25,12 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     
     return user_crud.create_new_user(db, user=user)
 
+@auth_router.post("/login")
+async def login(login_schema: UserLogin, db: Session = Depends(get_db)):
+    usuario = db.query(DBUser).filter(DBUser.usuario_email == login_schema.usuario_email).first()
+    if not usuario:
+        raise HTTPException(status_code=400, detail="E-mail ou senha incorretos")
+
+    else:
+        access_token = criar_token(usuario_id=usuario.id)
+        return {"access_token": access_token, "token_type": "bearer"}
