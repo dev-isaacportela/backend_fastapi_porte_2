@@ -1,3 +1,7 @@
 /.venv
 /.vscode
 /banco.db
+/alembic
+/alembic.ini
+/.env
+/test.py
