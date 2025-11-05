@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr
-from typing import List
+from pydantic import BaseModel, EmailStr, Field
+from typing import List, Annotated
 
 # Esquema base para Usuário e autenticação
 
@@ -8,10 +8,11 @@ class UserBase(BaseModel):
     
 # 
 class UserCreate(UserBase):
-    usuario_nome: str
-    usuario_sobrenome: str
+    usuario_nome: Annotated[str, Field(max_length=35, min_length=3, description="Nome do usuário, entre 3 e 35 caracteres")]
+    usuario_sobrenome: Annotated[str, Field(max_length=40, min_length=3, description="Sobrenome do usuário, entre 3 e 40 caracteres")]
     usuario_senha: str
-    usuario_admin: bool = False
+    usuario_admin: Annotated[bool, Field(default=False, description="Define se o usuário é admin ou não")]
+    
     
 class UserLogin(UserBase):
     usuario_email: EmailStr
