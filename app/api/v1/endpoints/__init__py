@@ -1,0 +1,2 @@
+#from .auth import auth_router as auth_router
+#absurdo para evitar erro de importação circular
