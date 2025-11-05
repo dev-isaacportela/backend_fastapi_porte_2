@@ -21,8 +21,10 @@ def create_token(usuario_id, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE
 @auth_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
 def register_user(
     user: Annotated[UserCreate, Body()], 
-    db: Annotated[Session, Depends(get_db)] #boa prática para tipar dependências
+    db: Annotated[Session, Depends(get_db)] 
+    #boa prática para tipar dependências
     ):
+    
     db_user = user_crud.get_user_by_email(db, email=user.usuario_email)
     if db_user:
         raise HTTPException(status_code=400, detail="E-mail já registrado")
