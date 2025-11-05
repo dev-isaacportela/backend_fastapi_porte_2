@@ -4,4 +4,5 @@
 /alembic
 /alembic.ini
 /.env
+/test.html
 /test.py
