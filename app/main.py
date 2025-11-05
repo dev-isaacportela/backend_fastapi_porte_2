@@ -11,7 +11,3 @@ app = FastAPI(
 
 # Inclui as rotas
 app.include_router(auth.auth_router, prefix="/v1")
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
