@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.orm import Session
 from datetime import timedelta, datetime, timezone
 from jose import jwt
@@ -8,6 +8,7 @@ from app.schemas.user_schemas import UserOut
 from app.crud import user_crud
 from app.schemas.user_schemas import UserCreate, UserLogin
 from app.models.orm import DBUser
+from typing import Annotated
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -18,7 +19,12 @@ def create_token(usuario_id, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE
     return jwt_codificado
 
 @auth_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
-def register_user(user: UserCreate, db: Session = Depends(get_db)):
+def register_user(
+    user: Annotated[UserCreate, Body()], 
+    db: Annotated[Session, Depends(get_db)] 
+    #boa prática para tipar dependências
+    ):
+    
     db_user = user_crud.get_user_by_email(db, email=user.usuario_email)
     if db_user:
         raise HTTPException(status_code=400, detail="E-mail já registrado")
