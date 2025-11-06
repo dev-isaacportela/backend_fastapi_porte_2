@@ -7,12 +7,12 @@ from app.db.base import Base
 class DBAbrangencia(Base):
     __tablename__ = "ABRANGENCIA"
     id = Column(Integer, primary_key=True, index=True)
-    abrangencia_nome = Column('name', String, unique=True, nullable=False)
+    abrangencia_nome = Column(String, unique=True, nullable=False)
 
 class DBCalibre(Base):
     __tablename__ = "CALIBRE_ARMA"
     id = Column(Integer, primary_key=True, index=True)
-    calibre_nome = Column('name', String, unique=True, nullable=False)
+    calibre_nome = Column(String, unique=True, nullable=False)
 
 class DBMarca(Base):
     __tablename__ = "MARCA_ARMA"
@@ -37,7 +37,7 @@ class DBStatus(Base):
 class DBMunicipio(Base):
     __tablename__ = "MUNICIPIO"
     id = Column(Integer, primary_key=True, index=True)
-    municipio_nome = Column('name', String, unique=True, nullable=False)
+    municipio_nome = Column(String, unique=True, nullable=False)
 
 class DBUF(Base):
     __tablename__ = "UF"
@@ -47,7 +47,7 @@ class DBUF(Base):
 class DBSexo(Base):
     __tablename__ = "SEXO"
     id = Column(Integer, primary_key=True, index=True)
-    sexo_nome = Column('name', String, unique=True, nullable=False)
+    sexo_nome = Column(String, unique=True, nullable=False)
 
 #Modelo de Usuários
 

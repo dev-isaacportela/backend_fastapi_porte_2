@@ -3,7 +3,7 @@ from typing import List, Annotated
 
 
 class PorteOut(BaseModel):
-    id: int
+    id: Annotated[int, Field(description="ID do porte")]
     ano_emissao: Annotated[int, Field(description="Ano de emissão do porte")]
         #int | None = None
     mes_emissao: Annotated[int, Field(description="Mês de emissão do porte")]
