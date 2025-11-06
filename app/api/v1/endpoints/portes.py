@@ -19,6 +19,7 @@ def list_all_portes(
         raise HTTPException(status_code=404, detail="Nenhum porte encontrado")
     if not user.usuario_admin:
         raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
+    return portes
 
 @portes_router.get("/{porte_id}", summary="Porte por ID", status_code=status.HTTP_200_OK)
 def get_porte_by_id(

@@ -95,4 +95,6 @@ async def get_user_by_email_route(
     user = user_crud.get_user_by_email(db, email=user_email)
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    if not user.usuario_admin:
+        raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
     return user
