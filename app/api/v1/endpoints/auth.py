@@ -1,15 +1,26 @@
+<<<<<<< HEAD
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+=======
+from fastapi import APIRouter, Depends, HTTPException, status
+>>>>>>> 76d042f830440c089a3dcf227d1245534ad2ff22
 from sqlalchemy.orm import Session
 from datetime import timedelta, datetime, timezone
 from jose import jwt
 from app.db.database import get_db, verify_token
+<<<<<<< HEAD
 from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM, oauth2_scheme, verify_password
+=======
+from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM, oauth2_scheme
+>>>>>>> 76d042f830440c089a3dcf227d1245534ad2ff22
 from app.schemas.user_schemas import UserOut
 from app.crud import user_crud
 from app.schemas.user_schemas import UserCreate, UserLogin
 from app.models.orm import DBUser
+<<<<<<< HEAD
 from typing import Annotated
+=======
+>>>>>>> 76d042f830440c089a3dcf227d1245534ad2ff22
 
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -19,6 +30,7 @@ def create_token(usuario_id, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE
     jwt_codificado = jwt.encode(dic_info, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_codificado
 
+<<<<<<< HEAD
 def auth_user(email: str, senha: str, db: Session):
     user = db.query(DBUser).filter(DBUser.usuario_email == email).first()
     if not user:
@@ -34,6 +46,10 @@ def register_user(
     #boa prática para tipar dependências
     ):
     
+=======
+@auth_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
+def register_user(user: UserCreate, db: Session = Depends(get_db)):
+>>>>>>> 76d042f830440c089a3dcf227d1245534ad2ff22
     db_user = user_crud.get_user_by_email(db, email=user.usuario_email)
     if db_user:
         raise HTTPException(status_code=400, detail="E-mail já registrado")
@@ -42,6 +58,7 @@ def register_user(
 
 @auth_router.post("/login")
 async def login(login_schema: UserLogin, db: Session = Depends(get_db)):
+<<<<<<< HEAD
     usuario = auth_user(login_schema.usuario_email, login_schema.usuario_senha, db)
     #usuario = db.query(DBUser).filter(DBUser.username == login_schema.usuario_email).first()
     if not usuario:
@@ -56,12 +73,21 @@ async def login(login_schema: UserLogin, db: Session = Depends(get_db)):
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     usuario = auth_user(form_data.username, form_data.password, db)
     #usuario = db.query(DBUser).filter(DBUser.username == login_schema.usuario_email).first()
+=======
+    usuario = db.query(DBUser).filter(DBUser.usuario_email == login_schema.usuario_email).first()
+>>>>>>> 76d042f830440c089a3dcf227d1245534ad2ff22
     if not usuario:
         raise HTTPException(status_code=400, detail="E-mail ou senha incorretos")
 
     else:
         access_token = create_token(usuario_id=usuario.id)
+<<<<<<< HEAD
         return {"access_token": access_token,
+=======
+        refresh_token = create_token(usuario_id=usuario.id, duracao_token=timedelta(days=7))
+        return {"access_token": access_token,
+                "refresh_token": refresh_token,
+>>>>>>> 76d042f830440c089a3dcf227d1245534ad2ff22
                 "token_type": "bearer"}
         
 @auth_router.get("/refresh")

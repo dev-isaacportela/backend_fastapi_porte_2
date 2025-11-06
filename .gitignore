@@ -2,6 +2,7 @@
 /.vscode
 /banco.db
 <<<<<<< HEAD
+<<<<<<< HEAD
 /.env
 /alembic.ini
 /estudo.py
@@ -16,3 +17,9 @@
 /test.py
 /estudo.py
 >>>>>>> ff87407f7789fc76abc0cf46e16082255001e8b2
+=======
+/alembic
+/alembic.ini
+/.env
+/test.py
+>>>>>>> 76d042f830440c089a3dcf227d1245534ad2ff22

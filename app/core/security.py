@@ -10,7 +10,11 @@ from app.models.orm import DBUser
 from app.schemas.user_schemas import TokenData
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+<<<<<<< HEAD
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/auth/login-form") 
+=======
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/auth/login") 
+>>>>>>> 76d042f830440c089a3dcf227d1245534ad2ff22
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
