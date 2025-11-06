@@ -3,11 +3,10 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta, datetime, timezone
 from jose import jwt
-from app.db.database import get_db, verify_token
-from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM, oauth2_scheme, verify_password
-from app.schemas.user_schemas import UserOut
+from app.db import get_db, verify_token
+from app.core import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM, oauth2_scheme, verify_password
 from app.crud import user_crud
-from app.schemas.user_schemas import UserCreate, UserLogin
+from app.schemas import UserCreate, UserLogin, UserOut
 from app.models.orm import DBUser
 from typing import Annotated
 
