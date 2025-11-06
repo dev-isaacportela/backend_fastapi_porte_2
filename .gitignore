@@ -1,22 +1,12 @@
 /.venv
 /.vscode
-/banco.db
-<<<<<<< HEAD
-<<<<<<< HEAD
+/banco.db<<<<<<< HEAD
 /.env
 /alembic.ini
 /estudo.py
 /test.html
 /test.py
 /alembic
-=======
-/alembic
-/alembic.ini
-/.env
-/test.html
-/test.py
-/estudo.py
->>>>>>> ff87407f7789fc76abc0cf46e16082255001e8b2
 =======
 /alembic
 /alembic.ini
