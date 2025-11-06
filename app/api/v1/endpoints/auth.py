@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Body
+from fastapi import APIRouter, Depends, HTTPException, status, Body, Path
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta, datetime, timezone
@@ -84,3 +84,15 @@ async def use_refresh_token(
     access_token = create_token(user.id)
     return {"access_token": access_token,
             "token_type": "bearer"}
+    
+@auth_router.get("/user/{user_email}", response_model=UserOut, status_code=status.HTTP_200_OK, summary="Obter dados do usuário pelo e-mail")
+async def get_user_by_email_route(
+    user_email: Annotated[str, Path(..., description="E-mail do usuário")],
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[DBUser, Depends(verify_token)]
+    ):
+    
+    user = user_crud.get_user_by_email(db, email=user_email)
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    return user
