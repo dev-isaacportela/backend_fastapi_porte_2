@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.api.v1.endpoints import auth
-from app.db.database import Base, engine 
+from app.db.base import Base
 
 #uvicorn app.main:app --reload
 

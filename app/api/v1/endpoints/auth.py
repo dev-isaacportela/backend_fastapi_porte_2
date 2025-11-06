@@ -18,7 +18,12 @@ def create_token(usuario_id, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE
     jwt_codificado = jwt.encode(dic_info, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_codificado
 
-def auth_user(email: str, senha: str, db: Session):
+def auth_user(
+    email: Annotated[str, Body()],
+    senha: Annotated[str, Body()],
+    db: Annotated[Session, Depends(get_db)]
+    ):
+    
     user = db.query(DBUser).filter(DBUser.usuario_email == email).first()
     if not user:
         return False
@@ -40,9 +45,12 @@ def register_user(
     return user_crud.create_new_user(db, user=user)
 
 @auth_router.post("/login")
-async def login(login_schema: UserLogin, db: Session = Depends(get_db)):
+async def login(
+    login_schema: Annotated[UserLogin, Body()],
+    db: Annotated[Session, Depends(get_db)]
+    ):
+    
     usuario = auth_user(login_schema.usuario_email, login_schema.usuario_senha, db)
-    #usuario = db.query(DBUser).filter(DBUser.username == login_schema.usuario_email).first()
     if not usuario:
         raise HTTPException(status_code=400, detail="E-mail ou senha incorretos")
 
@@ -52,7 +60,11 @@ async def login(login_schema: UserLogin, db: Session = Depends(get_db)):
                 "token_type": "bearer"}
         
 @auth_router.post("/login-form")
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+async def login(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
+    db: Annotated[Session, Depends(get_db)]
+    ):
+    
     usuario = auth_user(form_data.username, form_data.password, db)
     #usuario = db.query(DBUser).filter(DBUser.username == login_schema.usuario_email).first()
     if not usuario:
@@ -64,7 +76,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
                 "token_type": "bearer"}
         
 @auth_router.get("/refresh")
-async def use_refresh_token(token: str = Depends(oauth2_scheme), user: DBUser = Depends(verify_token)):
+async def use_refresh_token(
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    user: Annotated[DBUser, Depends(verify_token)]
+    ):
+    
     access_token = create_token(user.id)
     return {"access_token": access_token,
             "token_type": "bearer"}

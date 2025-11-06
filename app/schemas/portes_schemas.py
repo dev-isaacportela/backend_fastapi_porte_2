@@ -1,22 +1,23 @@
-from pydantic import BaseModel, EmailStr
-from typing import List
+from pydantic import BaseModel, EmailStr, Field
+from typing import List, Annotated
 
 
 class PorteOut(BaseModel):
     id: int
-    ano_emissao: int | None = None
-    mes_emissao: int | None = None
-    total: int | None = None
+    ano_emissao: Annotated[int, Field(description="Ano de emissão do porte")]
+        #int | None = None
+    mes_emissao: Annotated[int, Field(description="Mês de emissão do porte")]
+    total: Annotated[int, Field(description="Total de portes emitidos")]
 
-    uf: str | None = None
-    municipio: str | None = None
-    tipo: str | None = None
-    status: str | None = None
-    abrangencia: str | None = None
-    especie_arma: str | None = None
-    marca_arma: str | None = None
-    calibre_arma: str | None = None
-    sexo: str | None = None
+    uf: Annotated[str, Field(description="Unidade Federativa")]
+    municipio: Annotated[str, Field(description="Município")]
+    tipo: Annotated[str, Field(description="Tipo do porte")]
+    status: Annotated[str, Field(description="Status do porte")]
+    abrangencia: Annotated[str, Field(description="Abrangência do porte")]
+    especie_arma: Annotated[str, Field(description="Espécie da arma")]
+    marca_arma: Annotated[str, Field(description="Marca da arma")]
+    calibre_arma: Annotated[str, Field(description="Calibre da arma")]
+    sexo: Annotated[str, Field(description="Sexo do portador")]
 
     class Config:
         from_attributes = True

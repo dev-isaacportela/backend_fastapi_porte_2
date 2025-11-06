@@ -15,8 +15,8 @@ class UserCreate(UserBase):
     
     
 class UserLogin(UserBase):
-    usuario_email: EmailStr
-    usuario_senha: str
+    usuario_email: Annotated[EmailStr, Field(description="Email do usuário para login")]
+    usuario_senha: Annotated[str, Field(description="Senha do usuário para login")]
         
     class Config:
         from_attributes = True
