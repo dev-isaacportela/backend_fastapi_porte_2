@@ -24,10 +24,13 @@ def list_all_portes(
 @portes_router.get("/{porte_id}", summary="Porte por ID", status_code=status.HTTP_200_OK)
 def get_porte_by_id(
     porte_id: Annotated[int, Field(description="ID do porte a ser obtido")],
-    db: Annotated[Session, Depends(get_db)]
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[DBUser, Depends(verify_token)]
 ):
     
     porte = portes_crud.get_porte_by_id(db, porte_id)
     if not porte:
         raise HTTPException(status_code=404, detail="Porte não encontrado")
+    if not user.usuario_admin:
+        raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
     return porte
