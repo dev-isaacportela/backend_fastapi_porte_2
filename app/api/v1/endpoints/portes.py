@@ -5,6 +5,7 @@ from app.db import get_db, verify_token
 from typing import Annotated
 from pydantic import Field
 from app.models.orm import DBUser
+from app.schemas import PorteCreate
 
 portes_router = APIRouter(prefix="/portes", tags=["Portes"], dependencies=[Depends(verify_token)])
 
@@ -34,3 +35,19 @@ def get_porte_by_id(
     if not user.usuario_admin:
         raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
     return porte
+
+#@portes_router.get("/status/{status_nome}", summary="Portes por Status", status_code=status.HTTP_200_OK)
+#@portes_router.get("/uf/{uf_nome}", summary="Portes por Uf", status_code=status.HTTP_200_OK)
+#@portes_router.get("/municipio/{municipio_nome}", summary="Portes por Municipio", status_code=status.HTTP_200_OK)
+#@portes_router.get("/filtros/", summary="Portes com múltiplos filtros", status_code=status.HTTP_200_OK)
+
+@portes_router.post("/create_porte", response_model=PorteCreate, summary="Criação de um novo porte", status_code=status.HTTP_201_CREATED)
+def create_porte(
+    porte_data: Annotated[PorteCreate, Field(description="Dados do porte a ser criado")],
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[DBUser, Depends(verify_token)]
+):
+    new_porte = portes_crud.create_porte(db, porte_data)
+    if not user.usuario_admin:
+        raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
+    return new_porte

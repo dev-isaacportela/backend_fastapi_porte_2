@@ -89,3 +89,10 @@ def get_porte_by_id(db: Session, porte_id: int) -> Optional[dict]:
         "calibre_arma": p.calibre_arma.calibre_nome if p.calibre_arma else None,
         "sexo": p.sexo.sexo_nome if p.sexo else None,
     }
+    
+def create_porte(db: Session, porte_data: dict) -> DBPortes:
+    new_porte = DBPortes(**porte_data)
+    db.add(new_porte)
+    db.commit()
+    db.refresh(new_porte)
+    return new_porte

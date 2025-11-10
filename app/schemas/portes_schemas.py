@@ -22,3 +22,23 @@ class PorteOut(BaseModel):
     class Config:
         from_attributes = True
         json_encoders = {}
+        
+class PorteCreate(BaseModel):
+    ano_emissao: Annotated[int, Field(description="Ano de emissão do porte")]
+        #int | None = None
+    mes_emissao: Annotated[int, Field(description="Mês de emissão do porte")]
+    total: Annotated[int, Field(description="Total de portes emitidos")]
+
+    uf: Annotated[int, Field(description="ID da Unidade Federativa")]
+    municipio: Annotated[int, Field(description="ID do Município")]
+    tipo: Annotated[int, Field(description="ID do Tipo do porte")]
+    status: Annotated[int, Field(description="ID do Status do porte")]
+    abrangencia: Annotated[int, Field(description="ID da Abrangência do porte")]
+    especie_arma: Annotated[int, Field(description="ID da Espécie da arma")]
+    marca_arma: Annotated[int, Field(description="ID da Marca da arma")]
+    calibre_arma: Annotated[int, Field(description="ID do Calibre da arma")]
+    sexo: Annotated[int, Field(description="ID do Sexo do portador")]
+
+    class Config:
+        from_attributes = True
+        json_encoders = {}
