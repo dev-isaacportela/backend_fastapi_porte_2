@@ -51,3 +51,30 @@ def create_porte(
         raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
     new_porte = portes_crud.create_porte(db, porte_data.model_dump())
     return new_porte
+
+@portes_router.put("/update_porte/{porte_id}", summary="Atualização de um porte existente", status_code=status.HTTP_200_OK)
+def update_porte(
+    porte_id: Annotated[int, Field(description="ID do porte a ser atualizado")],
+    porte_data: Annotated[PorteCreate, Field(description="Dados atualizados do porte")],
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[DBUser, Depends(verify_token)]
+):
+    if not user.usuario_admin:
+        raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
+    updated_porte = portes_crud.update_porte(db, porte_id, porte_data.model_dump())
+    if not updated_porte:
+        raise HTTPException(status_code=404, detail="Porte não encontrado para atualização")
+    return updated_porte
+
+@portes_router.delete("/delete_porte/{porte_id}", summary="Exclusão de um porte", status_code=status.HTTP_200_OK)
+def delete_porte(
+    porte_id: Annotated[int, Field(description="ID do porte a ser excluído")],
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[DBUser, Depends(verify_token)]
+):
+    if not user.usuario_admin:
+        raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
+    deleted_porte = portes_crud.delete_porte(db, porte_id)
+    if not deleted_porte:
+        raise HTTPException(status_code=404, detail="Porte não encontrado para exclusão")
+    return {"detail": "Porte excluído com sucesso"}

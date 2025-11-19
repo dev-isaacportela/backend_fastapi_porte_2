@@ -96,3 +96,24 @@ def create_porte(db: Session, porte_data: dict) -> DBPortes:
     db.commit()
     db.refresh(new_porte)
     return new_porte
+
+def update_porte(db: Session, porte_id: int, porte_data: dict) -> Optional[DBPortes]:
+    porte = db.query(DBPortes).filter(DBPortes.id == porte_id).first()
+    if not porte:
+        return None
+
+    for key, value in porte_data.items():
+        setattr(porte, key, value)
+
+    db.commit()
+    db.refresh(porte)
+    return porte
+
+def delete_porte(db: Session, porte_id: int) -> bool:
+    porte = db.query(DBPortes).filter(DBPortes.id == porte_id).first()
+    if not porte:
+        return False
+
+    db.delete(porte)
+    db.commit()
+    return True
