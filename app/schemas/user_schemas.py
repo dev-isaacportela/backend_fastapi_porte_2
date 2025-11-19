@@ -37,4 +37,8 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     usuario_email: EmailStr | None = None
     
+class UserPasswordChange(BaseModel):
+    nova_senha: Annotated[str, Field(description="Nova senha do usuário")]
     
+    class Config:
+        from_attributes = True

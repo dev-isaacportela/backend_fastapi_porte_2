@@ -30,7 +30,17 @@ def auth_user(
     elif not verify_password(senha, user.usuario_senha):
         return False
     return user
-
+        
+@auth_router.get("/refresh")
+async def use_refresh_token(
+    token: Annotated[str, Depends(oauth2_scheme)], 
+    user: Annotated[DBUser, Depends(verify_token)]
+    ):
+    
+    access_token = create_token(user.id)
+    return {"access_token": access_token,
+            "token_type": "bearer"}
+    
 @auth_router.post("/login")
 async def login(
     login_schema: Annotated[UserLogin, Body()],
@@ -61,14 +71,3 @@ async def login(
         access_token = create_token(usuario_id=usuario.id)
         return {"access_token": access_token,
                 "token_type": "bearer"}
-        
-@auth_router.get("/refresh")
-async def use_refresh_token(
-    token: Annotated[str, Depends(oauth2_scheme)], 
-    user: Annotated[DBUser, Depends(verify_token)]
-    ):
-    
-    access_token = create_token(user.id)
-    return {"access_token": access_token,
-            "token_type": "bearer"}
-    

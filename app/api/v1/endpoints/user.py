@@ -6,24 +6,11 @@ from jose import jwt
 from app.db import get_db, verify_token
 from app.core import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM, oauth2_scheme, verify_password
 from app.crud import user_crud
-from app.schemas import UserCreate, UserLogin, UserOut
+from app.schemas import UserCreate, UserLogin, UserOut, UserPasswordChange
 from app.models.orm import DBUser
 from typing import Annotated
 
 user_router = APIRouter(prefix="/user", tags=["User"])
-
-@user_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
-def register_user(
-    user: Annotated[UserCreate, Body()], 
-    db: Annotated[Session, Depends(get_db)] 
-    #boa prática para tipar dependências
-    ):
-    
-    db_user = user_crud.get_user_by_email(db, email=user.usuario_email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="E-mail já registrado")
-    
-    return user_crud.create_new_user(db, user=user)
 
 @user_router.get("/user/{user_email}", response_model=UserOut, status_code=status.HTTP_200_OK, summary="Obter dados do usuário pelo e-mail")
 async def get_user_by_email_route(
@@ -63,6 +50,19 @@ async def is_admin_route(
     
     return {"is_admin": user.usuario_admin}
 
+@user_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
+def register_user(
+    user: Annotated[UserCreate, Body()], 
+    db: Annotated[Session, Depends(get_db)] 
+    #boa prática para tipar dependências
+    ):
+    
+    db_user = user_crud.get_user_by_email(db, email=user.usuario_email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="E-mail já registrado")
+    
+    return user_crud.create_new_user(db, user=user)
+
 @user_router.put("/update_user/{user_id}", response_model=UserOut, status_code=status.HTTP_200_OK, summary="Atualizar dados do usuário")
 async def update_user_route(
     user_id: Annotated[int, Path(..., description="ID do usuário a ser atualizado")],
@@ -81,7 +81,7 @@ async def update_user_route(
 @user_router.put("/change_password/{user_id}", status_code=status.HTTP_200_OK, summary="Alterar a senha do usuário")
 async def change_password_route(
     user_id: Annotated[int, Path(..., description="ID do usuário que terá a senha alterada")],
-    new_password: Annotated[str, Body(..., description="Nova senha do usuário")],
+    new_password: Annotated[UserPasswordChange, Body(..., description="Nova senha do usuário")],
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[DBUser, Depends(verify_token)]
     ):

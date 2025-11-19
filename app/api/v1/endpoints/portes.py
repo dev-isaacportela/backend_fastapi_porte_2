@@ -5,7 +5,7 @@ from app.db import get_db, verify_token
 from typing import Annotated
 from pydantic import Field
 from app.models.orm import DBUser
-from app.schemas import PorteCreate
+from app.schemas import PorteCreate, PorteOut, PorteUpdate
 
 
 portes_router = APIRouter(prefix="/portes", tags=["Portes"], dependencies=[Depends(verify_token)])
@@ -56,7 +56,7 @@ def create_porte(
 @portes_router.put("/update_porte/{porte_id}", summary="Atualização de um porte existente", status_code=status.HTTP_200_OK)
 def update_porte(
     porte_id: Annotated[int, Field(description="ID do porte a ser atualizado")],
-    porte_data: Annotated[PorteCreate, Field(description="Dados atualizados do porte")],
+    porte_data: Annotated[PorteUpdate, Field(description="Dados atualizados do porte")],
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[DBUser, Depends(verify_token)]
 ):
