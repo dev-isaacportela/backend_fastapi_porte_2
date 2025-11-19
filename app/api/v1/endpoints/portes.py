@@ -47,7 +47,7 @@ def create_porte(
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[DBUser, Depends(verify_token)]
 ):
-    new_porte = portes_crud.create_porte(db, porte_data)
     if not user.usuario_admin:
         raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
+    new_porte = portes_crud.create_porte(db, porte_data.model_dump())
     return new_porte
