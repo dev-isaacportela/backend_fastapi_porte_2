@@ -31,19 +31,6 @@ def auth_user(
         return False
     return user
 
-@auth_router.post("/create_user", response_model=UserOut, status_code=status.HTTP_201_CREATED, summary="Registro de novo usuário")
-def register_user(
-    user: Annotated[UserCreate, Body()], 
-    db: Annotated[Session, Depends(get_db)] 
-    #boa prática para tipar dependências
-    ):
-    
-    db_user = user_crud.get_user_by_email(db, email=user.usuario_email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="E-mail já registrado")
-    
-    return user_crud.create_new_user(db, user=user)
-
 @auth_router.post("/login")
 async def login(
     login_schema: Annotated[UserLogin, Body()],
@@ -85,16 +72,3 @@ async def use_refresh_token(
     return {"access_token": access_token,
             "token_type": "bearer"}
     
-@auth_router.get("/user/{user_email}", response_model=UserOut, status_code=status.HTTP_200_OK, summary="Obter dados do usuário pelo e-mail")
-async def get_user_by_email_route(
-    user_email: Annotated[str, Path(..., description="E-mail do usuário")],
-    db: Annotated[Session, Depends(get_db)],
-    user: Annotated[DBUser, Depends(verify_token)]
-    ):
-    
-    user = user_crud.get_user_by_email(db, email=user_email)
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
-    if not user.usuario_admin:
-        raise HTTPException(status_code=403, detail="Acesso negado. Usuário não é administrador.")
-    return user

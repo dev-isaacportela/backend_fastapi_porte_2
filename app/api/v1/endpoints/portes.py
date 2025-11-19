@@ -7,6 +7,7 @@ from pydantic import Field
 from app.models.orm import DBUser
 from app.schemas import PorteCreate
 
+
 portes_router = APIRouter(prefix="/portes", tags=["Portes"], dependencies=[Depends(verify_token)])
 
 @portes_router.get("/", summary="Listagem de todos os portes", status_code=status.HTTP_200_OK)
